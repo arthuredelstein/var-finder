@@ -10,9 +10,9 @@
   "True if a line of clojure code is empty (whitespace or comments)"
   [line]
   (when line
-		(if-let [before-comment (first (.split line ";"))]
-			(zero? (count (.trim before-comment)))
-			false)))
+    (if-let [before-comment (first (.split line ";"))]
+      (zero? (count (.trim before-comment)))
+      false)))
 			
 (defn read-clojure-source
   "Takes the some clojure source text and returns a sequence
@@ -23,11 +23,11 @@
         text-reader (BufferedReader. (StringReader. (str text)))]
     (take-while identity (repeatedly
 			 (fn [] (let [ntop (.getLineNumber code-reader)
-										sexpr (try (read code-reader) (catch Exception e nil))
-										nbot (.getLineNumber code-reader)
-										all-lines (repeatedly (- nbot ntop) #(.readLine text-reader))
-										code-lines (drop-while empty-line? all-lines)
-										nlines (count code-lines)]
+                    sexpr (try (read code-reader) (catch Exception e nil))
+                    nbot (.getLineNumber code-reader)
+                    all-lines (repeatedly (- nbot ntop) #(.readLine text-reader))
+                    code-lines (drop-while empty-line? all-lines)
+                    nlines (count code-lines)]
 			   (if sexpr {:sexpr sexpr :lines code-lines :line-no (- nbot nlines)})))))))
 			   
 ;; tests
