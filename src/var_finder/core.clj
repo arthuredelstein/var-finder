@@ -28,7 +28,7 @@
                    all-lines (repeatedly (- nbot ntop) #(.readLine text-reader))
                    code-lines (drop-while empty-line? all-lines)
                    nlines (count code-lines)]
-               (if sexpr {:sexpr sexpr :lines code-lines :line-no (- nbot nlines)})))))))
+               (if sexpr {:sexpr sexpr :text-lines code-lines :line (- nbot nlines)})))))))
 			   
 ;; tests
 
