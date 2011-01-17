@@ -15,11 +15,12 @@
       false)))
 			
 (defn read-clojure-source
-  "Takes the some clojure source text and returns a sequence
-  of maps, each containing an s-expression, the lines of text
+  "Takes the path to a clojure source file and returns a sequence
+  of maps, each containing an s-expression, the corresponding lines of text
   and the line number."
-  [text]
-  (let [code-reader (LineNumberingPushbackReader. (StringReader. (str \newline text)))
+  [file]
+  (let [text (slurp file)
+        code-reader (LineNumberingPushbackReader. (StringReader. (str \newline text)))
         text-reader (BufferedReader. (StringReader. (str text)))]
     (take-while identity (repeatedly
       (fn [] (let [ntop (.getLineNumber code-reader)
@@ -35,9 +36,7 @@
 (def test-file
   "https://github.com/clojure/clojure/raw/b578c69d7480f621841ebcafdfa98e33fcb765f6/src/clj/clojure/core.clj")
 
-(defn get-test-text [] (slurp test-file))
-
 (defn test-read []
-  (read-clojure-source (get-test-text)))
+  (read-clojure-source test-file))
 
   
