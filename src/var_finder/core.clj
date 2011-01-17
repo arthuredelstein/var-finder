@@ -28,11 +28,12 @@
                    all-lines (repeatedly (- nbot ntop) #(.readLine text-reader))
                    code-lines (drop-while empty-line? all-lines)
                    nlines (count code-lines)]
-               (if sexpr {:sexpr sexpr :text-lines code-lines :line (- nbot nlines)})))))))
+               (if sexpr {:sexpr sexpr, :text-lines code-lines, :line (- nbot nlines)})))))))
 			   
 ;; tests
 
-(def test-file "https://github.com/clojure/clojure/raw/b578c69d7480f621841ebcafdfa98e33fcb765f6/src/clj/clojure/core.clj")
+(def test-file
+  "https://github.com/clojure/clojure/raw/b578c69d7480f621841ebcafdfa98e33fcb765f6/src/clj/clojure/core.clj")
 
 (defn get-test-text [] (slurp test-file))
 
