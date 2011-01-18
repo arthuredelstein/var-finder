@@ -78,13 +78,13 @@
 
 (defn get-var-type [sexpr]
   (or
-    {'defn      "function"
+    ({'defn      "function"
      'definline "function"
      'defmacro  "macro"
      'defmulti  "multimethod"
      'defnmemo  "function"
      'defnk     "function"}
-       (first sexpr)
+       (first sexpr))
     "var"))
       
 (defn build-var-info [sexpr]
