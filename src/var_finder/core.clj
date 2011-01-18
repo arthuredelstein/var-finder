@@ -77,14 +77,14 @@
 (defn get-var-type [sexpr]
   (or
     ({'defn      "function"
-     'definline "function"
-     'defmacro  "macro"
-     'defmulti  "multimethod"
-     'defnmemo  "function"
-     'defnk     "function"}
-       (first sexpr))
+      'definline "function"
+      'defmacro  "macro"
+      'defmulti  "multimethod"
+      'defnmemo  "function"
+      'defnk     "function"}
+     (first sexpr))
     "var"))
-      
+
 (defn build-var-info [sexpr]
   (merge
     (select-keys (meta sexpr) [:file :line])
