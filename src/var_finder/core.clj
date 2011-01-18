@@ -4,8 +4,8 @@
  (:import [clojure.lang LineNumberingPushbackReader]
           [java.io BufferedReader StringReader]
           [java.lang StringBuilder]))
-            
-            
+
+
 (defn empty-line?
   "True if a line of clojure code is empty (whitespace or comments)"
   [line]
@@ -13,7 +13,7 @@
     (if-let [before-comment (first (.split line ";"))]
       (zero? (count (.trim before-comment)))
       false)))
-			
+
 (defn read-clojure-source
   "Takes the path to a clojure source file and returns a sequence
   of maps, each containing an s-expression with metadata including
@@ -31,10 +31,8 @@
                    line (- nbot (count code-lines))]
                (if sexpr (with-meta sexpr {:line line :file file}))))))))
 
-
 ;; namespace: { :full-name :short-name :doc :author :members :subspaces :see-also}
 ;; vars: {:name :doc :arglists :var-type :file :line :added :deprecated :dynamic}
-;; (merge (select-keys (meta v) [:arglists :file :line :added :deprecated :dynamic])
 
 (defn get-meta-deflike
   [sexpr]
@@ -94,10 +92,9 @@
     {:name (name (second sexpr))
      :var-type (get-var-type sexpr)}))
 
-
 (defn collect-vars [sexprs]
   (map build-var-info sexprs))
-			  
+
 ;; tests
 
 (def test-file
@@ -106,8 +103,8 @@
 
 (defn test-read []
   (read-clojure-source test-file))
-  
+
 (defn test-collect []
   (collect-vars (test-read)))
 
-  
+
