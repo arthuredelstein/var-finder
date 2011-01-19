@@ -99,7 +99,7 @@
      (first sexpr))
     "var"))
 
-(defn build-var-info [sexpr]
+(defn build-expr-info [sexpr]
   (if-let [analysis (analyze-sexpr sexpr)]
     (with-meta
       (if (= (first sexpr) 'ns)
@@ -114,8 +114,12 @@
            :var-type (get-var-type sexpr)}))
       {:expr-type (first sexpr)})))
 
-(defn collect-vars [sexprs]
-  (map build-var-info sexprs))
+(defn collect-ns-info [sexprs]
+  (let [exprs-info (map build-expr-info sexprs)]
+    (let [the-ns (first exprs-info)]
+      (if (= 'ns (:expr-type (meta the-ns)))
+        (merge the-ns {:members (rest exprs-info)})
+        (throw (Exception. "First element is not a namespace declaration."))))))
 
 ;; tests
 
@@ -127,6 +131,6 @@
   (read-clojure-source test-file))
 
 (defn test-collect []
-  (collect-vars (test-read)))
+  (collect-ns-info (test-read)))
 
 
