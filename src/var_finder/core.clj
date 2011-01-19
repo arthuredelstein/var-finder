@@ -100,16 +100,17 @@
     "var"))
 
 (defn build-var-info [sexpr]
-  (if (= (first sexpr) 'ns)
-    (merge
-      (select-keys (analyze-sexpr sexpr) [:doc :author :subspaces :see-also])
-      {:full-name (name (second sexpr))
-       :short-name (name (second sexpr))})
-    (merge
-      (select-keys (meta sexpr) [:file :line])
-      (select-keys (analyze-sexpr sexpr) [:arglists :doc :added :deprecated :dynamic])
-      {:name (name (second sexpr))
-       :var-type (get-var-type sexpr)})))
+  (if-let [analysis (analyze-sexpr sexpr)]
+    (if (= (first sexpr) 'ns)
+      (merge
+        (select-keys analysis [:doc :author :subspaces :see-also])
+        {:full-name (name (second sexpr))
+         :short-name (name (second sexpr))})
+      (merge
+        (select-keys (meta sexpr) [:file :line])
+        (select-keys analysis [:arglists :doc :added :deprecated :dynamic])
+        {:name (name (second sexpr))
+         :var-type (get-var-type sexpr)}))))
 
 (defn collect-vars [sexprs]
   (map build-var-info sexprs))
@@ -117,8 +118,8 @@
 ;; tests
 
 (def test-file
-  ;"https://github.com/clojure/clojure/raw/b578c69d7480f621841ebcafdfa98e33fcb765f6/src/clj/clojure/core.clj")
-  "src/var_finder/code_sample.clj")
+  "https://github.com/clojure/clojure/raw/b578c69d7480f621841ebcafdfa98e33fcb765f6/src/clj/clojure/core.clj")
+  ;"src/var_finder/code_sample.clj")
 
 (defn test-read []
   (read-clojure-source test-file))
