@@ -5,6 +5,10 @@
           [java.io BufferedReader StringReader]
           [java.lang StringBuilder]))
 
+(defn has?
+  "If x is in collection, returns x, else nil."
+  [coll x]
+  (some #{x} coll))
 
 (defn empty-line?
   "True if a line of clojure code is empty (whitespace or comments)"
@@ -71,7 +75,7 @@
 (defn analyze-sexpr
 	"Analyze the s-expression for docs and metadata."
   [sexpr]
-    (condp #(some #{%2} %1) (first sexpr)
+    (condp has? (first sexpr)
       '(ns)
         (get-meta-deflike sexpr)
       '(def defhinted defonce defstruct)
