@@ -73,7 +73,7 @@
 
 ;; TODO: 'ns (namespaces)
 (defn analyze-sexpr
-	"Analyze the s-expression for docs and metadata."
+  "Analyze the s-expression for docs and metadata."
   [sexpr]
     (condp has? (first sexpr)
       '(ns)
@@ -101,16 +101,18 @@
 
 (defn build-var-info [sexpr]
   (if-let [analysis (analyze-sexpr sexpr)]
-    (if (= (first sexpr) 'ns)
-      (merge
-        (select-keys analysis [:doc :author :subspaces :see-also])
-        {:full-name (name (second sexpr))
-         :short-name (name (second sexpr))})
-      (merge
-        (select-keys (meta sexpr) [:file :line])
-        (select-keys analysis [:arglists :doc :added :deprecated :dynamic])
-        {:name (name (second sexpr))
-         :var-type (get-var-type sexpr)}))))
+    (with-meta
+      (if (= (first sexpr) 'ns)
+        (merge
+          (select-keys analysis [:doc :author :subspaces :see-also])
+          {:full-name (name (second sexpr))
+           :short-name (name (second sexpr))})
+        (merge
+          (select-keys (meta sexpr) [:file :line])
+          (select-keys analysis [:arglists :doc :added :deprecated :dynamic])
+          {:name (name (second sexpr))
+           :var-type (get-var-type sexpr)}))
+      {:expr-type (first sexpr)})))
 
 (defn collect-vars [sexprs]
   (map build-var-info sexprs))
