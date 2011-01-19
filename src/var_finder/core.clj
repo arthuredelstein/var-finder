@@ -38,7 +38,12 @@
   [sexpr]
   (meta (second sexpr)))
 
-;; TODO: :arglists
+(defn get-arg-lists [sexpr]
+  (let [tail (drop-while #(or (map? %) (string? %)) (drop 2 sexpr))
+        exp1 (first tail)]
+    (cond (vector? exp1) (list exp1)
+          (list? exp1) (map first tail))))
+
 (defn get-meta-defnlike
   [sexpr]
   (let [[_ t2 t3 t4] sexpr
@@ -47,7 +52,8 @@
       (meta t2)
       (if (map? t3) t3)
       (if (and d (map? t4)) t4)
-      (if d {:doc d}))))
+      (if d {:doc d})
+      {:arglists (get-arg-lists sexpr)})))
 
 (defn get-meta-tail-doc
   [sexpr n]
@@ -64,6 +70,8 @@
 	"Analyze the s-expression for docs and metadata."
   [sexpr]
     (condp #(some #{%2} %1) (first sexpr)
+      '(ns)
+        (get-meta-deflike sexpr)
       '(def defhinted defonce defstruct)
         (get-meta-deflike sexpr)
       '(defn definline defmacro defmulti defn-memo defnk)
@@ -86,11 +94,16 @@
     "var"))
 
 (defn build-var-info [sexpr]
-  (merge
-    (select-keys (meta sexpr) [:file :line])
-    (select-keys (analyze-sexpr sexpr) [:arglists :doc :added :deprecated :dynamic])
-    {:name (name (second sexpr))
-     :var-type (get-var-type sexpr)}))
+  (if (= (first sexpr) 'ns)
+    (merge
+      (select-keys (analyze-sexpr sexpr) [:doc :author :subspaces :see-also])
+      {:full-name (name (second sexpr))
+       :short-name (name (second sexpr))})
+    (merge
+      (select-keys (meta sexpr) [:file :line])
+      (select-keys (analyze-sexpr sexpr) [:arglists :doc :added :deprecated :dynamic])
+      {:name (name (second sexpr))
+       :var-type (get-var-type sexpr)})))
 
 (defn collect-vars [sexprs]
   (map build-var-info sexprs))
